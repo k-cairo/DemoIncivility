@@ -1,0 +1,84 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html lang="fr">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'application/fonts/icomoon/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'application/css/owl.carousel.min.css' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">
+
+    <!-- Style -->
+    <link rel="stylesheet" href="{% static 'application/css/style2.css' %}">
+
+    <title>Liste d'incivilités</title>
+</head>
+
+<body class="gradient-custom">
+<!--Navbar-->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'application-index' %}">Ecole Jean de la Fontaine</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="{% url 'application-display_incivilities' %}">Afficher les
+                incivilités</a>
+            <a class="nav-item nav-link" href="{% url 'application-display_delays' %}">Afficher les retards</a>
+            <a class="nav-item nav-link" href="{% url 'application-display_absences' %}">Afficher les absences</a>
+            {% if request.user.is_superuser %}
+            <a class="nav-item nav-link" href="{% url 'application-download_sheet' %}">Télécharger fiche élève</a>
+            <a class="nav-item nav-link" href="{% url 'admin:index' %}">Site d'administration</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="d-block mb-4 mt-4 text-center">
+        <h2 class="new-heading">Ajout d'incivilité</h2>
+    </div>
+    <div class="table-responsive">
+        <form class="form-text-white select-rounded" id="IncivilityPostForm" data-students-url="{% url 'application-ajax_load_students' %}" method="POST"
+              autocomplete="off">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Valider">
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'application/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'application/js/popper.min.js' %}"></script>
+<script src="{% static 'application/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'application/js/main.js' %}"></script>
+<script>
+            $("#id_classroom").change(function () {
+              var url = $("#IncivilityPostForm").attr("data-students-url");  // get the url of the `load_cities` view
+              var classroomId = $(this).val();  // get the selected classroom ID from the HTML input
+
+              $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                  'classroom_id': classroomId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                  $("#id_student").html(data);  // replace the contents of the student input with the data that came from the server
+                }
+              });
+            });
+
+
+</script>
+</body>
+
+</html>

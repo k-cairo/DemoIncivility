@@ -1,0 +1,68 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html lang="fr">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'application/fonts/icomoon/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'application/css/owl.carousel.min.css' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">
+
+    <!-- Style -->
+    <link rel="stylesheet" href="{% static 'application/css/style.css' %}">
+
+    <title>Liste d'incivilités</title>
+</head>
+
+<body class="img js-fullheight" style="background-image: url('{% static 'application/images/home_page.jpg' %}')">
+
+<section style="padding: 6rem 0;">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+                <h2 style="font-family: chapaza; color: white;">École Jean de La Fontaine élémentaire</h2>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'application-display_incivilities' %}">
+                <div class="mt-4 mb-4">
+                    <img class="rounded-circle w-25"
+                         src="{% static 'application/images/incivilites.png' %}"
+                         alt="incivilités">
+                </div>
+            </a>
+            <a href="{% url 'application-display_delays' %}">
+                <div class="mt-4 mb-4">
+                    <img class="rounded-circle w-25"
+                         src="{% static 'application/images/retards.png' %}"
+                         alt="retards">
+                </div>
+            </a>
+            <a href="{% url 'application-display_absences' %}">
+                <div class="mt-4 mb-4">
+                    <img class="rounded-circle w-25"
+                         src="{% static 'application/images/absences.png' %}"
+                         alt="absences">
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
+

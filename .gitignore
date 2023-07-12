@@ -1,0 +1,9 @@
+.idea/
+db.sqlite3
+__pycache__/
+.env/
+.env
+/incivility/incivility_csv/
+/incivility/application/migrations/
+/incivility_venv/
+incivility/config.json

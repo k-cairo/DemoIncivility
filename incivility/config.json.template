@@ -1,0 +1,10 @@
+{
+  "mailconf": {
+    "emailfrom": "A compléter",
+    "emailto": "A compléter",
+    "password": "A compléter",
+    "subject": "Liste d'incivilité",
+    "smtphost": "smtp.gmail.com",
+    "smtpport": 587
+  }
+}

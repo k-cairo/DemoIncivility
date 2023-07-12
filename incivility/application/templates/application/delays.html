@@ -1,0 +1,161 @@
+{% load static %}
+
+<html lang="fr">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'application/fonts/icomoon/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'application/css/owl.carousel.min.css' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'application/css/bootstrap.min.css' %}">
+
+    <!-- Style -->
+    <link rel="stylesheet" href="{% static 'application/css/style2.css' %}">
+
+    <title>Liste d'incivilités</title>
+</head>
+
+<body class="gradient-custom">
+<!--Navbar-->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'application-index' %}">Ecole Jean de la Fontaine</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{% url 'application-display_incivilities' %}">Afficher les
+                incivilités</a>
+            <a class="nav-item nav-link active" href="{% url 'application-display_delays' %}">Afficher les retards</a>
+            <a class="nav-item nav-link" href="{% url 'application-display_absences' %}">Afficher les absences</a>
+            {% if request.user.is_superuser %}
+            <a class="nav-item nav-link" href="{% url 'application-download_sheet' %}">Télécharger fiche élève</a>
+            <a class="nav-item nav-link" href="{% url 'admin:index' %}">Site d'administration</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <section>
+        <div class="pb-4">
+            <div class="d-block mb-4 mt-4 text-center">
+                <h2 class="new-heading">Liste de retards</h2>
+            </div>
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col col-xl-10 bg-light rounded-div">
+                    <!-- Ajout d'incivilité , retard ou absence-->
+                    <div class="d-flex align-items-center ">
+                        <a href="{% url 'application-add_delay' %}"
+                           style="text-decoration: none; color: black; margin: 0 auto;">
+                            <h2><span class="new-badge new-badge-info">Ajouter un retard</span></h2>
+                        </a>
+                    </div>
+
+                    <!--Incivility Table-->
+                    <div class="table-responsive">
+                        <table class="table custom-table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Professeur</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Durée</th>
+                                <th scope="col">Justifiée</th>
+                                <th scope="col">Élève</th>
+                                <th scope="col">Classe</th>
+                                <th scope="col">Détail</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for delay in delays %}
+                            <tr style="background-color:{{ delay.teacher.color }} ">
+                                <!-- Image and Teacher Info Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.teacher }}</span>
+                                </td>
+
+                                <!-- Date Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.date }}</span>
+                                </td>
+
+                                <!-- Duration Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.duration }}</span>
+                                </td>
+
+                                <!-- Justified Field-->
+                                <td class="align-middle">
+                                    <span>{{ absence.justified_name }}</span>
+                                </td>
+
+                                <!-- Student Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.student }}</span>
+                                </td>
+
+                                <!-- Classroom Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.classroom }}</span>
+                                </td>
+
+                                <!-- Delay detail Field-->
+                                <td class="align-middle">
+                                    <span>{{ delay.detail }}</span>
+                                </td>
+
+                                <!-- Update Delay  Field-->
+                                <td class="align-middle">
+                                    <a href="{% url 'application-update_delay' delay.id %}">🖊️</a>
+                                </td>
+
+                                <!-- Delete Delay  Field-->
+                                <td class="align-middle">
+                                    <a href="{% url 'application-delete_delay' delay.id %}"
+                                       onclick="return confirm('Voulez-vous vraiment supprimer ce retard?')">🗑️</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--CSV Generation-->
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'application-generate_csv' %}"
+                       style="text-decoration: none; color: black; margin: 0 auto;">
+                        <h2 class="csv-button"><span class="new-badge new-badge-info">Générer CSV</span></h2>
+                    </a>
+                    {% endif %}
+
+                    <!--Error message Generation-->
+                    {% if messages %}
+                    <ul class="w-75 p-3">
+                        {% for message in messages %}
+                        <li
+                                {% if message.tags %} class="alert alert-info" {% endif %}>{{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+            <script src="{% static 'application/js/jquery-3.3.1.min.js' %}"></script>
+            <script src="{% static 'application/js/popper.min.js' %}"></script>
+            <script src="{% static 'application/js/bootstrap.min.js' %}"></script>
+            <script src="{% static 'application/js/main.js' %}"></script>
+</body>
+</html>
