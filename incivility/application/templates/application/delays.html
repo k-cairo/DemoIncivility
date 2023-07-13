@@ -34,8 +34,8 @@
                 incivilités</a>
             <a class="nav-item nav-link active" href="{% url 'application-display_delays' %}">Afficher les retards</a>
             <a class="nav-item nav-link" href="{% url 'application-display_absences' %}">Afficher les absences</a>
-            {% if request.user.is_superuser %}
             <a class="nav-item nav-link" href="{% url 'application-download_sheet' %}">Télécharger fiche élève</a>
+            {% if request.user.is_superuser %}
             <a class="nav-item nav-link" href="{% url 'admin:index' %}">Site d'administration</a>
             {% endif %}
         </div>
@@ -130,12 +130,10 @@
                     </div>
 
                     <!--CSV Generation-->
-                    {% if request.user.is_superuser %}
                     <a href="{% url 'application-generate_csv' %}"
                        style="text-decoration: none; color: black; margin: 0 auto;">
                         <h2 class="csv-button"><span class="new-badge new-badge-info">Générer CSV</span></h2>
                     </a>
-                    {% endif %}
 
                     <!--Error message Generation-->
                     {% if messages %}

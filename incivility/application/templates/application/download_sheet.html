@@ -35,8 +35,8 @@
                 incivilités</a>
             <a class="nav-item nav-link" href="{% url 'application-display_delays' %}">Afficher les retards</a>
             <a class="nav-item nav-link" href="{% url 'application-display_absences' %}">Afficher les absences</a>
+            <a class="nav-item nav-link" href="{% url 'application-download_sheet' %}">Télécharger fiche élève</a>
             {% if request.user.is_superuser %}
-            <a class="nav-item nav-link active" href="{% url 'application-download_sheet' %}">Télécharger fiche élève</a>
             <a class="nav-item nav-link" href="{% url 'admin:index' %}">Site d'administration</a>
             {% endif %}
         </div>
