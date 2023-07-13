@@ -1,7 +1,7 @@
 from django.urls import path
-from utils.utils import HtmlRoute
 
 from . import views
+from .toolbox.utils import HtmlRoute
 
 urlpatterns = [
     path(HtmlRoute.INDEX.value, views.index, name='application-index'),

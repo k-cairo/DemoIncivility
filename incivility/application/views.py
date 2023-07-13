@@ -10,8 +10,8 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 
 from .form import IncivilityPostForm, DelayPostForm, AbsencePostForm, StudentSheetPostForm
 from .models import Incivility, IncivilityArchived, Teacher, Student, Delay, Absence
-from ..utils.sendmail import Sendmail
-from ..utils.utils import HtmlFile, RequestMethod, HtmlRoute, get_header_and_incivilitys_from_file, write_in_file
+from .toolbox.sendmail import Sendmail
+from .toolbox.utils import HtmlFile, RequestMethod, HtmlRoute, get_header_and_incivilitys_from_file, write_in_file
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 INCIVILITY_CSV_PATH = os.path.join(BASE_DIR / "incivility_csv")

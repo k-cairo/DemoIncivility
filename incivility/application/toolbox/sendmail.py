@@ -5,7 +5,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 
-from incivility.utils.conf import Conf
+from application.toolbox.conf import Conf
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 INCIVILITY_CSV_PATH = os.path.join(BASE_DIR / "incivility_csv")
