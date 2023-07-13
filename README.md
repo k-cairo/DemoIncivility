@@ -1,4 +1,4 @@
-# Incivility
+# DemoIncivility
 
 Ce projet est un outil d'aide aux ensaignants pour la gestion des élèves au quotidien et de gérer les absences et les 
 retards des élèves mais également de réunir sur un même document les incivilités dont ils font preuve. 
@@ -6,6 +6,13 @@ retards des élèves mais également de réunir sur un même document les incivi
 Tout cela est à destination des familles et favorise le travail en équipe entre les enseignants et les parents.
 
 Ce projet est disponible en suivant ce lien : https://demoincivilite.pythonanywhere.com/
+
+Vous aurez besoin des identifiants suivants pour vous connecter :
+
+   ```bash
+   Identifiant : invite
+   Mot de passe : guest2023
+   ```
 
 ## Installation
 
