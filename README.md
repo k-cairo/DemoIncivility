@@ -5,7 +5,7 @@ retards des élèves mais également de réunir sur un même document les incivi
 
 Tout cela est à destination des familles et favorise le travail en équipe entre les enseignants et les parents.
 
-Ce projet est disponible en suivant ce lien : https://incivilite.pythonanywhere.com/
+Ce projet est disponible en suivant ce lien : https://demoincivilite.pythonanywhere.com/
 
 ## Installation
 
