@@ -2,6 +2,7 @@ import datetime
 import locale
 import os
 from pathlib import Path
+from typing import Union
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -9,7 +10,8 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 
 from .form import IncivilityPostForm, DelayPostForm, AbsencePostForm, StudentSheetPostForm
-from .models import Incivility, IncivilityArchived, Teacher, Student, Delay, Absence
+from .models import Incivility, IncivilityArchived, Teacher, Student, Delay, Absence, AbsenceArchived, DelayArchived
+from .toolbox.E5Xlsx import SheetNameEnum, E5Xlsx
 from .toolbox.sendmail import Sendmail
 from .toolbox.utils import HtmlFile, RequestMethod, HtmlRoute, get_header_and_incivilitys_from_file, write_in_file
 
@@ -200,37 +202,53 @@ def download_sheet(request):
 
 
 ####################################################### UTILS ##########################################################
+# TODO Logging instead of print
 def generate_csv(request):
     success: bool = True
     message: str
     student_first_name: str
     student_last_name: str
-    csv_list: list = []
-    incivilities: QuerySet = Incivility.objects.all().order_by('-date')
+    xlsx: Union[E5Xlsx, None] = None
+    file_exists: Union[bool , None] = None
+    incivilities: QuerySet[Incivility] = Incivility.objects.all().order_by('-date')
+    delays: QuerySet[Delay] = Delay.objects.all().order_by('-date')
+    absences: QuerySet[Absence] = Absence.objects.all().order_by('-date')
 
-    # Create csv folder if not exists
-    if not os.path.exists(INCIVILITY_CSV_PATH):
-        os.mkdir(INCIVILITY_CSV_PATH)
+    # Create incivility_csv directory if not exists
+    try:
+        if not os.path.exists(INCIVILITY_CSV_PATH):
+            os.mkdir(INCIVILITY_CSV_PATH)
+    except Exception as ex:
+        success = False
+        print(f"Une erreur est survenue lors de la création du dossier incivility_csv : {ex}")
 
+    # Loop Through Incivilities
     for incivility in incivilities:
-        detail = "RAS" if incivility.detail == "" else incivility.detail
-        incivility_format = [
-            [incivility.date.strftime('%d %B %Y %H:%M'), incivility.student, incivility.incivility, detail]]
-
-        # Build csv and write in csv
         if success:
-            csv_file: str = f"{incivility.student}_{incivility.classroom}.csv"
-            full_path_csv_file = os.path.join(BASE_DIR / "incivility_csv" / csv_file)
-            if os.path.exists(path=full_path_csv_file):
-                incivility_read: list[list] = get_header_and_incivilitys_from_file(file=full_path_csv_file)
-                incivility_read += incivility_format
-                success, message = write_in_file(file=full_path_csv_file, incivilitys=incivility_read)
-            else:
-                success, message = write_in_file(file=full_path_csv_file, incivilitys=incivility_format)
+            incivility: Incivility  # type hinting for PyCharm
 
-            # Add csv to csv_list
-            if success:
-                csv_list.append(full_path_csv_file)
+            csv_file = f"{incivility.student}_{incivility.classroom}.xlsx"
+
+            xlsx = E5Xlsx()
+            try:
+                xlsx.full_path_csv_file = os.path.join(BASE_DIR / "incivility_csv" / csv_file)
+            except Exception as ex:
+                success = False
+                print(f"Une erreur est survenue lors de la création du fichier {csv_file} : {ex}")
+
+        if success:
+            success, message, file_exists = xlsx.check_if_file_exists()
+            if not success:
+                print(message)
+
+        if success and not file_exists:
+            success, message = xlsx.create_workbook()
+            if not success:
+                print(message)
+
+        if success:
+            success, message = xlsx.append_to_sheet(sheet_name=SheetNameEnum.INCIVILITY.value,
+                                                    data=incivility.format_for_xlsx())
             if not success:
                 print(message)
 
@@ -250,12 +268,97 @@ def generate_csv(request):
 
             target_incivility.delete()
 
-    # Send mail
-    if success:
-        email: Sendmail = Sendmail(csv_list=set(csv_list))
-        success, message = email.send_mail_attachment()
-        if not success:
-            print(message)
+    # Loop Through Delays
+    for delay in delays:
+        if success:
+            delay: Delay  # type hinting for PyCharm
+
+            csv_file = f"{delay.student}_{delay.classroom}.xlsx"
+
+            xlsx = E5Xlsx()
+            try:
+                xlsx.full_path_csv_file = os.path.join(BASE_DIR / "incivility_csv" / csv_file)
+            except Exception as ex:
+                success = False
+                print(f"Une erreur est survenue lors de la création du fichier {csv_file} : {ex}")
+
+        if success:
+            success, message, file_exists = xlsx.check_if_file_exists()
+            if not success:
+                print(message)
+
+        if success and not file_exists:
+            success, message = xlsx.create_workbook()
+            if not success:
+                print(message)
+
+        if success:
+            success, message = xlsx.append_to_sheet(sheet_name=SheetNameEnum.DELAY.value,
+                                                    data=delay.format_for_xlsx())
+            if not success:
+                print(message)
+
+        # Delete delay if success | Else do something else
+        if success:
+            target_delay = get_object_or_404(Delay, id=delay.id)
+
+            archived_delay = DelayArchived(
+                teacher=target_delay.teacher,
+                student=target_delay.student,
+                classroom=target_delay.classroom,
+                justified_name=target_delay.justified_name,
+                date=target_delay.date,
+                detail=target_delay.detail
+            )
+            archived_delay.save()
+
+            target_delay.delete()
+
+    # Loop Through Absences
+    for absence in absences:
+        if success:
+            absence: Absence  # type hinting for PyCharm
+
+            csv_file = f"{absence.student}_{absence.classroom}.xlsx"
+
+            xlsx = E5Xlsx()
+            try:
+                xlsx.full_path_csv_file = os.path.join(BASE_DIR / "incivility_csv" / csv_file)
+            except Exception as ex:
+                success = False
+                print(f"Une erreur est survenue lors de la création du fichier {csv_file} : {ex}")
+
+        if success:
+            success, message, file_exists = xlsx.check_if_file_exists()
+            if not success:
+                print(message)
+
+        if success and not file_exists:
+            success, message = xlsx.create_workbook()
+            if not success:
+                print(message)
+
+        if success:
+            success, message = xlsx.append_to_sheet(sheet_name=SheetNameEnum.ABSENCE.value,
+                                                    data=absence.format_for_xlsx())
+            if not success:
+                print(message)
+
+        # Delete absence if success | Else do something else
+        if success:
+            target_absence = get_object_or_404(Absence, id=absence.id)
+
+            archived_absence = AbsenceArchived(
+                teacher=target_absence.teacher,
+                student=target_absence.student,
+                classroom=target_absence.classroom,
+                justified_name=target_absence.justified_name,
+                date=target_absence.date,
+                detail=target_absence.detail
+            )
+            archived_absence.save()
+
+            target_absence.delete()
 
     return redirect('/')
 

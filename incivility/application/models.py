@@ -87,6 +87,15 @@ class Delay(models.Model):
     def __str__(self) -> str:
         return f"Retard - {self.date} - {self.student} - {self.teacher} - {self.classroom}"
 
+    # E5
+    def format_for_xlsx(self) -> list[str]:
+        return [
+            self.date.strftime('%d %B %Y %H:%M'),
+            self.student.name,
+            self.justified_name.name,
+            self.detail
+        ]
+
 
 class Absence(models.Model):
     id = models.AutoField(primary_key=True)
@@ -104,6 +113,16 @@ class Absence(models.Model):
     def __str__(self) -> str:
         return f"Absence - {self.date} - {self.student} - {self.teacher} - {self.classroom}"
 
+    # E5
+    def format_for_xlsx(self) -> list[str]:
+        return [
+            self.date.strftime('%d %B %Y %H:%M'),
+            self.student.name,
+            self.duration.name,
+            self.justified_name.name,
+            self.detail
+        ]
+
 
 class IncivilityArchived(models.Model):
     id = models.AutoField(primary_key=True)
@@ -118,3 +137,37 @@ class IncivilityArchived(models.Model):
 
     def __str__(self) -> str:
         return f"{self.incivility} - {self.date} - {self.student} - {self.teacher} - {self.classroom}"
+
+
+# E5
+class DelayArchived(models.Model):
+    id = models.AutoField(primary_key=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True)
+    justified_name = models.ForeignKey(JustifiedName, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(auto_now=True)
+    detail = models.TextField()
+
+    objects = models.Manager()
+
+    def __str__(self) -> str:
+        return f"Retard - {self.date} - {self.student} - {self.teacher} - {self.classroom}"
+
+
+# E5
+class AbsenceArchived(models.Model):
+    id = models.AutoField(primary_key=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True)
+    justified_name = models.ForeignKey(JustifiedName, on_delete=models.SET_NULL, null=True)
+    duration = models.ForeignKey(AbsenceDurationName, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(auto_now=True)
+    detail = models.TextField()
+
+    objects = models.Manager()
+
+    # E5
+    def __str__(self) -> str:
+        return f"Absence - {self.date} - {self.student} - {self.teacher} - {self.classroom}"

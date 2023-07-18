@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Incivility, Delay, Absence, IncivilityArchived, Teacher, Classroom, Student, IncivilityName, \
-    JustifiedName, AbsenceDurationName
+    JustifiedName, AbsenceDurationName, AbsenceArchived, DelayArchived
 
 
 @admin.register(Incivility)
@@ -22,6 +22,16 @@ class AbsenceAdmin(admin.ModelAdmin):
 @admin.register(IncivilityArchived)
 class IncivilityArchivedAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'teacher', 'incivility', 'student', 'detail')
+
+
+@admin.register(DelayArchived)
+class DelayArchivedAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date', 'teacher', 'justified_name', 'student', 'detail')
+
+
+@admin.register(AbsenceArchived)
+class AbsenceArchivedAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date', 'teacher', 'justified_name', 'duration', 'student', 'detail')
 
 
 @admin.register(IncivilityName)
