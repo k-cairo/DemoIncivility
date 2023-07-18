@@ -71,6 +71,15 @@ class Incivility(models.Model):
     def __str__(self) -> str:
         return f"{self.incivility} - {self.date} - {self.student} - {self.teacher} - {self.classroom}"
 
+    # E5
+    def format_for_xlsx(self) -> list[str]:
+        return [
+            self.date.strftime('%d %B %Y %H:%M'),
+            self.student.name,
+            self.incivility.name,
+            self.detail
+        ]
+
 
 class Delay(models.Model):
     id = models.AutoField(primary_key=True)
